@@ -14,80 +14,93 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 🔹 Avatar
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "Profile",
-            modifier = Modifier.size(80.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = "Localisation") //TODO db
-        Text(text = "Membre depuis ...") //TODO db
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔹 Note
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // Header profil
+        item {
             Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Note",
-                tint = Color.Yellow
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Profile",
+                modifier = Modifier.size(96.dp)
             )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("Note/5") //TODO db
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("(nb avis)") //TODO db
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = "Localisation") // TODO DB
+            Text(text = "Membre depuis ...") // TODO DB
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        //BOX
-        service_box()
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔹 Liste annonces
-        Text("Mes annonces")
-
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f) // prend l'espace restant
-                .fillMaxWidth()
-        ) {
-            items(5) { index ->
-                Text("Annonce $index", modifier = Modifier.padding(8.dp))
+        // Note
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Note",
+                        tint = Color(0xFFFFC107)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("4.8 / 5") // TODO DB
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("(32 avis)") // TODO DB
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔹 Boutons
-        Button(
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Modifier profil")
+        // Services / box
+        item {
+            service_box()
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        // Annonces
+        item {
+            Text(
+                text = "Mes annonces",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
 
-        Button(
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Paramètres")
+        items(5) { index ->
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Annonce $index",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
+        // Actions
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Modifier profil")
+                }
+
+                OutlinedButton(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Paramètres")
+                }
+            }
         }
     }
 }
-

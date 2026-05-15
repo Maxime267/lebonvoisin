@@ -1,4 +1,4 @@
-package com.example.lebonvoisin.annonces
+package com.example.lebonvoisin.view.annonces
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,6 +9,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.lebonvoisin.dataclass.Annonce
+import com.example.lebonvoisin.viewmodel.annonces.AjouterAnnonceViewModel
 
 private val typesDeService = listOf(
     "Bricolage", "Jardinage", "Garde d'animaux",
@@ -21,14 +24,16 @@ fun AjouterAnnonce(
     onPublier: (Annonce) -> Unit,
     onBack: () -> Unit
 ) {
-    var titre by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var typeSelectionne by remember { mutableStateOf("") }
-    var dropdownExpanded by remember { mutableStateOf(false) }
+    val viewModel: AjouterAnnonceViewModel = hiltViewModel()
+    val titre = viewModel.titre
+    val description = viewModel.description
+    val typeSelectionne = viewModel.typeSelectionne
 
-    var titreError by remember { mutableStateOf(false) }
-    var descriptionError by remember { mutableStateOf(false) }
-    var typeError by remember { mutableStateOf(false) }
+    val titreError = viewModel.titreError
+    val descriptionError = viewModel.descriptionError
+    val typeError = viewModel.typeError
+
+    var dropdownExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -53,7 +58,7 @@ fun AjouterAnnonce(
 
             OutlinedTextField(
                 value = titre,
-                onValueChange = { titre = it; titreError = false },
+                onValueChange = { viewModel.onTitreChange(it) },
                 label = { Text("Titre") },
                 placeholder = { Text("Ex : Tonte de pelouse") },
                 isError = titreError,
@@ -65,7 +70,7 @@ fun AjouterAnnonce(
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { description = it; descriptionError = false },
+                onValueChange = { viewModel.onDescritpionChange(it)},
                 label = { Text("Description") },
                 placeholder = { Text("Décrivez votre service…") },
                 isError = descriptionError,
@@ -100,8 +105,7 @@ fun AjouterAnnonce(
                         DropdownMenuItem(
                             text = { Text(type) },
                             onClick = {
-                                typeSelectionne = type
-                                typeError = false
+                                viewModel.onTypeChange(type)
                                 dropdownExpanded = false
                             }
                         )
@@ -114,19 +118,7 @@ fun AjouterAnnonce(
 
             Button(
                 onClick = {
-                    titreError = titre.isBlank()
-                    descriptionError = description.isBlank()
-                    typeError = typeSelectionne.isBlank()
-                    if (!titreError && !descriptionError && !typeError) {
-                        onPublier(
-                            Annonce(
-                                id = System.currentTimeMillis().toInt(),
-                                titre = titre.trim(),
-                                description = description.trim(),
-                                typeService = typeSelectionne
-                            )
-                        )
-                    }
+                    viewModel.publierAnnonce(onPublier)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

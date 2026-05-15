@@ -1,4 +1,4 @@
-package com.example.lebonvoisin.annonces
+package com.example.lebonvoisin.dataclass
 
 data class Annonce(
     val id: Int,

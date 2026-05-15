@@ -1,4 +1,4 @@
-package com.example.lebonvoisin.annonces
+package com.example.lebonvoisin.view.annonces
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,25 +12,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.lebonvoisin.dataclass.Annonce
+import com.example.lebonvoisin.viewmodel.annonces.AjouterAnnonceViewModel
+import com.example.lebonvoisin.viewmodel.annonces.MesAnnoncesViewModel
 
 @Composable
-fun MesAnnonces(modifier: Modifier = Modifier) {
+fun MesAnnonces(
+    modifier: Modifier = Modifier,
+) {
+    val mesAnnoncesViewModel: MesAnnoncesViewModel = hiltViewModel()
+    val annonces = mesAnnoncesViewModel.annonces
+    val afficherAjouter = mesAnnoncesViewModel.afficherAjouter
 
-    var annonces by remember { mutableStateOf(listOf<Annonce>()) }
-    var afficherAjouter by remember { mutableStateOf(false) }
 
     if (afficherAjouter) {
         AjouterAnnonce(
             onPublier = { nouvelle ->
-                annonces = annonces + nouvelle
-                afficherAjouter = false
+                mesAnnoncesViewModel.ajouterAnnonce(nouvelle)
             },
-            onBack = { afficherAjouter = false }
+            onBack = { mesAnnoncesViewModel.afficherAjouter = false }
         )
     } else {
         Scaffold(
             floatingActionButton = {
-                FloatingActionButton(onClick = { afficherAjouter = true }) {
+                FloatingActionButton(onClick = { mesAnnoncesViewModel.afficherAjouter = true }) {
                     Icon(Icons.Default.Add, contentDescription = "Ajouter une annonce")
                 }
             }

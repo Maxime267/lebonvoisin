@@ -7,19 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.example.lebonvoisin.pAppBar.*
+import androidx.navigation.compose.rememberNavController
+import com.example.lebonvoisin.navigation.AppNavGraph
 import com.example.lebonvoisin.ui.theme.LebonvoisinTheme
-import com.example.lebonvoisin.profile.Profile
-import com.example.lebonvoisin.annonces.MesAnnonces
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import com.example.lebonvoisin.view.pAppBar.AppBar
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint
+class EntryMain : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,27 +31,21 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
 
-    var currentScreen by remember { mutableStateOf(Screen.HOME) }
+    val navController = rememberNavController()
 
     Scaffold(
         bottomBar = {
             AppBar(
-                onHomeClick = { currentScreen = Screen.HOME },
-                onProfileClick = { currentScreen = Screen.PROFILE },
-                onSearchClick = {currentScreen = Screen.ADD}
+                onHomeClick = { navController.navigate("home") },
+                onSearchClick = { navController.navigate("add") },
+                onProfileClick = { navController.navigate("profile") }
             )
         }
     ) { padding ->
 
         Box(modifier = Modifier.padding(padding)) {
-            when (currentScreen) {
-                Screen.HOME -> Text("Home page") //TODO ADD Function
-                Screen.ADD -> MesAnnonces()//TODO ADD Function
-                Screen.PROFILE -> Profile()
-            }
+            AppNavGraph(navController)
         }
     }
 }
-
-
 

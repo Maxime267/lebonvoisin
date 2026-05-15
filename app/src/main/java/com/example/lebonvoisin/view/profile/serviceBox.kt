@@ -1,4 +1,4 @@
-package com.example.lebonvoisin.profile
+package com.example.lebonvoisin.view.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

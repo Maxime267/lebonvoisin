@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import com.example.lebonvoisin.pAppBar.*
 import com.example.lebonvoisin.ui.theme.LebonvoisinTheme
 import com.example.lebonvoisin.profile.Profile
+import com.example.lebonvoisin.annonces.MesAnnonces
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
@@ -48,7 +49,7 @@ fun MainScreen() {
         Box(modifier = Modifier.padding(padding)) {
             when (currentScreen) {
                 Screen.HOME -> Text("Home page") //TODO ADD Function
-                Screen.ADD -> Text("ADD") //TODO ADD Function
+                Screen.ADD -> MesAnnonces()//TODO ADD Function
                 Screen.PROFILE -> Profile()
             }
         }

@@ -4,22 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.lebonvoisin.navigation.AppNavGraph
 import com.example.lebonvoisin.navigation.AppScaffold
 import com.example.lebonvoisin.navigation.AuthNavGraph
 import com.example.lebonvoisin.ui.theme.LebonvoisinTheme
-import com.example.lebonvoisin.view.authentification.AuthScreen
-import com.example.lebonvoisin.view.pAppBar.AppBar
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,10 +31,11 @@ class EntryMain : ComponentActivity() {
 fun MainScreen(authViewModel: AuthViewModel = hiltViewModel()) {
 
     val navController = rememberNavController()
+    val currentUser = authViewModel.currentUser.value
 
-    if (authViewModel.currentUser.value != null) {
-        AuthNavGraph(navController)
-    } else {
+    if (currentUser != null) {
         AppScaffold(navController)
+    } else {
+        AuthNavGraph(navController)
     }
 }

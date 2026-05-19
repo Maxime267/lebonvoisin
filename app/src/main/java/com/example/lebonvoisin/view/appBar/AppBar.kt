@@ -1,4 +1,4 @@
-package com.example.lebonvoisin.view.pAppBar
+package com.example.lebonvoisin.view.appBar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -9,6 +9,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 @Composable
 fun AppBar(
@@ -16,25 +19,36 @@ fun AppBar(
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit
 ) {
+    var selected = remember { mutableStateOf("Home") }
+
     NavigationBar {
 
         NavigationBarItem(
-            selected = true,
-            onClick = onHomeClick,
+            selected = selected.value == "Home",
+            onClick = {
+                selected.value = "Home"
+                onHomeClick()
+                      },
             icon = { Icon(Icons.Default.Home, null) },
             label = { Text("Home") }
         )
 
         NavigationBarItem(
-            selected = false,
-            onClick = onSearchClick,
+            selected = selected.value == "Ajouter",
+            onClick = {
+                selected.value = "Ajouter"
+                onSearchClick()
+                      },
             icon = { Icon(Icons.Default.AddCircle, null) },
             label = { Text("Ajouter") }
         )
 
         NavigationBarItem(
-            selected = false,
-            onClick = onProfileClick,
+            selected = selected.value == "Profile",
+            onClick = {
+                selected.value = "Profile"
+                onProfileClick()
+                      },
             icon = { Icon(Icons.Default.AccountCircle, null) },
             label = { Text("Profile") }
         )

@@ -5,16 +5,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.lebonvoisin.view.annonces.MesAnnonces
 import com.example.lebonvoisin.view.authentification.AuthScreen
 import com.example.lebonvoisin.view.home.HomeScreen
-import com.example.lebonvoisin.view.pAppBar.AppBar
+import com.example.lebonvoisin.view.appBar.AppBar
 import com.example.lebonvoisin.view.profile.Profile
-import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 
 
 

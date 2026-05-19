@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.kapt) apply false
     // Firebase
     alias(libs.plugins.google.services) apply false
+
 }

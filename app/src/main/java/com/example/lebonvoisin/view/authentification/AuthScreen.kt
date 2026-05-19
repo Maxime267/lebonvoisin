@@ -10,7 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lebonvoisin.viewmodel.annonces.MesAnnoncesViewModel
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
+import kotlinx.coroutines.launch
 
 
 /**
@@ -18,9 +22,11 @@ import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
  * Utilise AuthViewModel pour effectuer les actions.
  */
 @Composable
-fun AuthScreen(viewModel: AuthViewModel) {
+fun AuthScreen() {
+    val viewModel: AuthViewModel = hiltViewModel()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope() // scope pour lancer les appels suspend de viewModel
 
     Column(modifier = Modifier.padding(8.dp)) {
         Text(text = "Authentification")
@@ -40,11 +46,11 @@ fun AuthScreen(viewModel: AuthViewModel) {
         )
 
         Row(modifier = Modifier.padding(top = 8.dp)) {
-            Button(onClick = { viewModel.signIn(email.trim(), password) }, modifier = Modifier.weight(1f)) {
+            Button(onClick = { scope.launch { viewModel.signIn(email.trim(), password) } }, modifier = Modifier.weight(1f)) {
                 Text("Se connecter")
             }
 
-            Button(onClick = { viewModel.signUp(email.trim(), password) }, modifier = Modifier.weight(1f)) {
+            Button(onClick = { scope.launch { viewModel.signUp(email.trim(), password) } }, modifier = Modifier.weight(1f)) {
                 Text("S'inscrire")
             }
         }

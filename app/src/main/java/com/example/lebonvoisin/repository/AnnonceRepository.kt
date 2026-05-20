@@ -29,4 +29,16 @@ class AnnonceRepository @Inject constructor(
             "Erreur lors de la publication: ${e.message}"
         }
     }
+    suspend fun getAnnoncesByUser(userId: String): List<Annonce> {
+        return try {
+            val snapshot = firestore.collection("annonces")
+                .whereEqualTo("ownerId", userId)
+                .get()
+                .await()
+            snapshot.documents.mapNotNull { it.toObject(Annonce::class.java) }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
 }

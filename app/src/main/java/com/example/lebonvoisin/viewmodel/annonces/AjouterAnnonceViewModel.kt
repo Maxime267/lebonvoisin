@@ -38,9 +38,17 @@ class AjouterAnnonceViewModel @Inject constructor(
             description = description.trim(),
             typeService = typeSelectionne
         )
-        onSuccess(annonce)
-        repository.publier(annonce) //TODO
-        reset()
+
+        repository.publier(
+            annonce = annonce,
+            onSuccess = {
+                onSuccess(annonce)
+                reset()
+            },
+            onFailure = {
+                // ici tu peux ajouter un message d'erreur plus tard
+            }
+        )
     }
 
     fun reset() {

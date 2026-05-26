@@ -16,6 +16,16 @@ class MesAnnoncesViewModel @Inject constructor(
 
     var annonces by mutableStateOf(listOf<Annonce>())
     var afficherAjouter by mutableStateOf(false)
+    var isLoading by mutableStateOf(false)
+
+    fun chargerAnnonces() {
+        isLoading = true
+
+        repository.lire { result ->
+            annonces = result
+            isLoading = false
+        }
+    }
 
     fun ajouterAnnonce(nouvelle: Annonce) {
         annonces = annonces + nouvelle

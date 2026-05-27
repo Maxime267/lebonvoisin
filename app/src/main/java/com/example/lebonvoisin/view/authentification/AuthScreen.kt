@@ -11,8 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lebonvoisin.viewmodel.annonces.MesAnnoncesViewModel
+import androidx.navigation.NavHostController
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -22,18 +21,18 @@ import kotlinx.coroutines.launch
  * Utilise AuthViewModel pour effectuer les actions.
  */
 @Composable
-fun AuthScreen() {
+fun AuthScreen(navController : NavHostController ) {
     val viewModel: AuthViewModel = hiltViewModel()
-    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val user = viewModel.user.value
     val scope = rememberCoroutineScope() // scope pour lancer les appels suspend de viewModel
 
     Column(modifier = Modifier.padding(8.dp)) {
         Text(text = "Authentification")
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = user.email,
+            onValueChange = { viewModel.updateEmail(it) },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -46,17 +45,17 @@ fun AuthScreen() {
         )
 
         Row(modifier = Modifier.padding(top = 8.dp)) {
-            Button(onClick = { scope.launch { viewModel.signIn(email.trim(), password) } }, modifier = Modifier.weight(1f)) {
+            Button(onClick = { scope.launch { viewModel.connection(email = user.email, password = password) } }, modifier = Modifier.weight(1f)) {
                 Text("Se connecter")
             }
 
-            Button(onClick = { scope.launch { viewModel.signUp(email.trim(), password) } }, modifier = Modifier.weight(1f)) {
+            Button(onClick = { navController.navigate("inscription") }, modifier = Modifier.weight(1f)) {
                 Text("S'inscrire")
             }
         }
 
         // Déconnexion
-        if (viewModel.currentUser.value != null) {
+        if (viewModel.firebaseCurrentUser.value != null) {
             Button(onClick = { viewModel.signOut() }, modifier = Modifier.padding(top = 8.dp)) {
                 Text("Se déconnecter")
             }

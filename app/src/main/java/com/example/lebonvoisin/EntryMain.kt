@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.lebonvoisin.navigation.AppScaffold
 import com.example.lebonvoisin.navigation.AuthNavGraph
+import com.example.lebonvoisin.navigation.RootNavGraph
 import com.example.lebonvoisin.ui.theme.LebonvoisinTheme
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,7 @@ class EntryMain : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LebonvoisinTheme {
-                MainScreen()
+                RootNavGraph()
             }
         }
     }
@@ -28,14 +29,6 @@ class EntryMain : ComponentActivity() {
 
 
 @Composable
-fun MainScreen(authViewModel: AuthViewModel = hiltViewModel()) {
-
-    val navController = rememberNavController()
-    val currentUser = authViewModel.currentUser.value
-
-    if (currentUser != null) {
-        AppScaffold(navController)
-    } else {
-        AuthNavGraph(navController)
-    }
+fun MainScreen() {
+    RootNavGraph()
 }

@@ -21,4 +21,10 @@ class AuthRepository @Inject constructor(
     }
 
      fun getCurrentUser() = auth.currentUser
+
+    // Force la mise à jour du token d'authentification pour s'assurer qu'on a un token valide
+    suspend fun awaitCurrentToken() {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.getIdToken(true)?.await()
+    }
 }

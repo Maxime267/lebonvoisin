@@ -16,7 +16,10 @@ import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
@@ -47,7 +50,7 @@ fun Profile(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Voisinage : " + user?.neighboorhoodName ) // TODO DB
+            Text(text = "Voisinage : " + user?.neighborhoodName ) // TODO DB
             Text(text = "Membre deuis le " + user?.inscriptionDate) // TODO DB
 
 
@@ -118,5 +121,43 @@ fun Profile(modifier: Modifier = Modifier) {
                 }
             }
 
+    }
+}
+
+
+@Composable
+fun service_box(){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        service_box_creation(Icons.Default.ShoppingCart, 0, "Object échangés")
+        service_box_creation(Icons.Default.Face, 0 , "Service échangés")
+    }
+}
+
+@Composable
+fun service_box_creation(varIcon : ImageVector, nb_echanger : Int, title: String){
+    Card(
+        modifier = Modifier.size(150.dp)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                Icon(
+                    imageVector = varIcon,
+                    contentDescription = title,
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(title)
+                Text(nb_echanger.toString()) //TODO db
+            }
+        }
     }
 }

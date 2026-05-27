@@ -1,5 +1,7 @@
 package com.example.lebonvoisin.repository
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.example.lebonvoisin.dataclass.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,6 +30,22 @@ class UserRepository @Inject constructor(
 
     fun getCurrentUserID() = auth.currentUser?.uid
 
+
+    fun createUserIfNotExists(user: User) {
+        try {
+
+            val userId = auth.currentUser?.uid ?: return
+            val userRef = firestore.collection("users").document(userId)
+
+            userRef.get().addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    userRef.set(user)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FIRESTORE_ERROR", "Erreur createUserIfNotExists", e)
+        }
+    }
 
 
 }

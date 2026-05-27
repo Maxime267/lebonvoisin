@@ -2,11 +2,14 @@ package com.example.lebonvoisin.viewmodel.authentification
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.repository.AuthRepository
+import com.example.lebonvoisin.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * ViewModel simple pour gérer l'authentification Firebase.
@@ -15,22 +18,56 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository,
-    private val firebaseAuth: FirebaseAuth
+    private val authRepository: AuthRepository,
+    private val firebaseAuth: FirebaseAuth,
+    private val userRepository: UserRepository
 ) : ViewModel() {
-    val currentUser = mutableStateOf<FirebaseUser?>(repository.getCurrentUser())
+
+    var user = mutableStateOf<User>(
+        User(
+            name = "",
+            email = "",
+            phone = "",
+            profilePictureUrl = "",
+            inscriptionDate = "",
+            neighborhoodName = ""
+        )
+    )
+
+    val firebaseCurrentUser = mutableStateOf<FirebaseUser?>(authRepository.getCurrentUser())
     val message = mutableStateOf<String>("")
 
     init {
         // Listener Firebase pour les changements d'authentification
         firebaseAuth.addAuthStateListener { auth ->
-            currentUser.value = auth.currentUser
+            firebaseCurrentUser.value = auth.currentUser
         }
     }
 
-    suspend fun signIn(email: String, password: String) {
+
+    fun updateName(newName: String) {
+        user.value = user.value.copy(name = newName)
+    }
+    fun updateEmail(newEmail: String) {
+        user.value = user.value.copy(email = newEmail)
+    }
+    fun updatePhone(newPhone: String) {
+        user.value = user.value.copy(phone = newPhone)
+    }
+    fun updateProfilePicture(newUrl: String) {
+        user.value = user.value.copy(profilePictureUrl = newUrl)
+    }
+    fun updateNeighborhood(newNeighborhood: String) {
+        user.value = user.value.copy(neighborhoodName = newNeighborhood)
+    }
+
+
+
+
+
+    suspend fun connection(email: String, password: String) {
         try {
-            repository.signIn(email, password)
+            authRepository.signIn(email, password)
             // Le listener Firebase se chargera de mettre à jour currentUser
             message.value = "Connexion réussie"
         } catch (e: Exception) {
@@ -38,18 +75,21 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    suspend fun signUp(email: String, password: String) {
+    suspend fun inscription(password: String) {
         try {
-            repository.signUp(email, password)
-            // Le listener Firebase se chargera de mettre à jour currentUser
-            message.value = "Inscription réussie"
+            authRepository.signUp(user.value.email, password)
+            authRepository.awaitCurrentToken()
+            userRepository.createUserIfNotExists(user.value)
+            message.value = "Connexion réussie"
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            message.value = "Erreur: ${e.message}"
+            message.value = "Erreur: ${e.localizedMessage}"
         }
     }
 
     fun signOut() {
-        repository.signOut()
+        authRepository.signOut()
         // Le listener Firebase se chargera de mettre à jour currentUser
         message.value = "Déconnecté"
     }

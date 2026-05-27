@@ -1,4 +1,4 @@
-package com.example.lebonvoisin
+package com.example.lebonvoisin.dataclass
 
 class Service {
     var nom_service = ""

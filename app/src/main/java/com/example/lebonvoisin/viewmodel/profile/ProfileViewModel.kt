@@ -1,5 +1,6 @@
 package com.example.lebonvoisin.viewmodel.profile
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -25,18 +26,11 @@ class ProfileViewModel @Inject constructor(
 
     var user by mutableStateOf<User?>(null)
     val userID by lazy { userRepository.getCurrentUserID() }
-    var listAnnonce by mutableStateOf<List<Annonce>>(emptyList())
 
     fun loadUserInfo() {
         viewModelScope.launch {
-
-            try {
-                listAnnonce = annonceRepository.getAnnoncesByUser(userID.toString())
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                listAnnonce = emptyList()
-            }
+            user = userRepository.getCurrentUser()
         }
     }
+
 }

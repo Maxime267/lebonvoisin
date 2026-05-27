@@ -16,6 +16,7 @@ import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
@@ -23,7 +24,9 @@ fun Profile(modifier: Modifier = Modifier) {
     val authViewModel : AuthViewModel = hiltViewModel()
     val profileViewModel : ProfileViewModel = hiltViewModel()
 
-    profileViewModel.loadUserInfo()
+    LaunchedEffect(Unit) {
+        profileViewModel.loadUserInfo()
+    }
     val user : User? = profileViewModel.user
 
     Column(
@@ -82,28 +85,6 @@ fun Profile(modifier: Modifier = Modifier) {
                 text = "Mes annonces",
                 style = MaterialTheme.typography.titleMedium
             )
-
-
-
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(
-                    items = profileViewModel.listAnnonce,
-                    key = { it.id }
-                ) { annonce ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = annonce.titre,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
-            }
 
 
         // Actions

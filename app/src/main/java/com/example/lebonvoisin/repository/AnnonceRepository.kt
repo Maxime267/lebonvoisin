@@ -1,5 +1,6 @@
 package com.example.lebonvoisin.repository
 
+import android.util.Log
 import com.example.lebonvoisin.dataclass.Annonce
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -35,10 +36,37 @@ class AnnonceRepository @Inject constructor(
                 .whereEqualTo("ownerId", userId)
                 .get()
                 .await()
-            snapshot.documents.mapNotNull { it.toObject(Annonce::class.java) }
+            snapshot.documents.map { document ->
+                Annonce(
+                    id = document.getLong("id")?.toInt() ?: 0,
+                    titre = document.getString("titre") ?: "",
+                    description = document.getString("description") ?: "",
+                    typeService = document.getString("typeService") ?: ""
+                )
+            }
         } catch (e: Exception) {
+            Log.e("FIRESTORE_ERROR", "Erreur getAnnoncesByUser", e)
             emptyList()
         }
     }
 
+    suspend fun getAnnoncesAll(): List<Annonce> {
+        return try {
+            val snapshot = firestore.collection("annonces")
+                .get()
+                .await()
+
+            snapshot.documents.map { document ->
+                Annonce(
+                    id = document.getLong("id")?.toInt() ?: 0,
+                    titre = document.getString("titre") ?: "",
+                    description = document.getString("description") ?: "",
+                    typeService = document.getString("typeService") ?: ""
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("FIRESTORE_ERROR", "Erreur getAnnoncesAll", e)
+            emptyList()
+        }
+    }
 }

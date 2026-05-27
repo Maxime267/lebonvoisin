@@ -12,14 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
+import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
 
     val authViewModel : AuthViewModel = hiltViewModel()
+    val profileViewModel : ProfileViewModel = hiltViewModel()
 
-    LazyColumn(
+    profileViewModel.loadUserInfo()
+    val user : User? = profileViewModel.user
+
+    Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
@@ -28,7 +35,7 @@ fun Profile(modifier: Modifier = Modifier) {
     ) {
 
         // Header profil
-        item {
+
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Profile",
@@ -37,12 +44,12 @@ fun Profile(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Localisation") // TODO DB
-            Text(text = "Membre depuis ...") // TODO DB
-        }
+            Text(text = "Voisinage : " + user?.neighboorhoodName ) // TODO DB
+            Text(text = "Membre deuis le " + user?.inscriptionDate) // TODO DB
+
 
         // Note
-        item {
+
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -62,38 +69,53 @@ fun Profile(modifier: Modifier = Modifier) {
                     Text("(32 avis)") // TODO DB
                 }
             }
-        }
+
 
         // Services / box
-        item {
+
             service_box()
-        }
+
 
         // Annonces
-        item {
+
             Text(
                 text = "Mes annonces",
                 style = MaterialTheme.typography.titleMedium
             )
-        }
 
-        items(5) { index ->
-            Card(
-                modifier = Modifier.fillMaxWidth()
+
+
+            LazyColumn(
+                modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = "Annonce $index",
-                    modifier = Modifier.padding(16.dp)
-                )
+                items(
+                    items = profileViewModel.listAnnonce,
+                    key = { it.id }
+                ) { annonce ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = annonce.titre,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
             }
-        }
+
 
         // Actions
-        item {
+
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
+                Text(text = profileViewModel.userID.toString())
+
                 Button(
-                    onClick = { },
+                    onClick = {
+                        profileViewModel.loadUserInfo() //TODO Change juste c une test
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Modifier profil")
@@ -114,6 +136,6 @@ fun Profile(modifier: Modifier = Modifier) {
                     Text("Se déconnecter", color = Color.White)
                 }
             }
-        }
+
     }
 }

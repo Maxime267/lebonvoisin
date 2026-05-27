@@ -11,9 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
+
+    val authViewModel : AuthViewModel = hiltViewModel()
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -99,6 +104,14 @@ fun Profile(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Paramètres")
+                }
+
+                Button(
+                    onClick = {authViewModel.signOut() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text("Se déconnecter", color = Color.White)
                 }
             }
         }

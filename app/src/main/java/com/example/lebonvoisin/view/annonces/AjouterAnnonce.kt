@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.lebonvoisin.dataclass.Annonce
-import com.example.lebonvoisin.viewmodel.annonces.AjouterAnnonceViewModel
+import com.example.lebonvoisin.viewmodel.annonces.MesAnnoncesViewModel
+import kotlinx.coroutines.launch
 
 private val typesDeService = listOf(
     "Bricolage", "Jardinage", "Garde d'animaux",
@@ -24,7 +25,7 @@ fun AjouterAnnonce(
     onPublier: (Annonce) -> Unit,
     onBack: () -> Unit
 ) {
-    val viewModel: AjouterAnnonceViewModel = hiltViewModel()
+    val viewModel: MesAnnoncesViewModel = hiltViewModel()
     val titre = viewModel.titre
     val description = viewModel.description
     val typeSelectionne = viewModel.typeSelectionne
@@ -32,6 +33,8 @@ fun AjouterAnnonce(
     val titreError = viewModel.titreError
     val descriptionError = viewModel.descriptionError
     val typeError = viewModel.typeError
+    val scope = rememberCoroutineScope()
+
 
     var dropdownExpanded by remember { mutableStateOf(false) }
 
@@ -118,7 +121,9 @@ fun AjouterAnnonce(
 
             Button(
                 onClick = {
-                    viewModel.publierAnnonce(onPublier)
+                    scope.launch {
+                        viewModel.publierAnnonce(onPublier)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

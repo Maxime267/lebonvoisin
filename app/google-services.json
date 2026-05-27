@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1077864704623",
-    "project_id": "lebonvoisin-badab",
-    "storage_bucket": "lebonvoisin-badab.firebasestorage.app"
+    "project_number": "33904984404",
+    "project_id": "le-bon-voisin",
+    "storage_bucket": "le-bon-voisin.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1077864704623:android:2d03e9a5c30cd3e5c43b9a",
+        "mobilesdk_app_id": "1:33904984404:android:f7d186f6a165ea7f5848c1",
         "android_client_info": {
           "package_name": "com.example.lebonvoisin"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB7B7lsZm0PdSYhULcNLt9OAbR_Qw-I7XU"
+          "current_key": "AIzaSyCQIr-ccynhOO5wC9BL4C9_FSrDcsdHRQg"
         }
       ],
       "services": {

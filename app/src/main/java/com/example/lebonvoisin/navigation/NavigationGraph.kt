@@ -27,7 +27,8 @@ fun RootNavGraph(authViewModel: AuthViewModel = hiltViewModel()) {
 
     NavHost(
         navController = navController,
-        startDestination = if (currentUser != null) "app" else "auth"
+        //startDestination = if (currentUser != null) "app" else "auth"
+        startDestination = "app"
     ) {
 
         composable("auth") {

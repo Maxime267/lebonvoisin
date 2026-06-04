@@ -41,7 +41,10 @@ class AnnonceRepository @Inject constructor(
                     id = document.getLong("id")?.toInt() ?: 0,
                     titre = document.getString("titre") ?: "",
                     description = document.getString("description") ?: "",
-                    typeService = document.getString("typeService") ?: ""
+                    typeService = document.getString("typeService") ?: "",
+                    personne = document.getString("personne") ?: "",
+                    rue = document.getString("rue") ?: "",
+                    action = document.getString("action") ?: ""
                 )
             }
         } catch (e: Exception) {
@@ -61,7 +64,10 @@ class AnnonceRepository @Inject constructor(
                     id = document.getLong("id")?.toInt() ?: 0,
                     titre = document.getString("titre") ?: "",
                     description = document.getString("description") ?: "",
-                    typeService = document.getString("typeService") ?: ""
+                    typeService = document.getString("typeService") ?: "",
+                    personne = document.getString("personne") ?: "",
+                    rue = document.getString("rue") ?: "",
+                    action = document.getString("action") ?: ""
                 )
             }
         } catch (e: Exception) {

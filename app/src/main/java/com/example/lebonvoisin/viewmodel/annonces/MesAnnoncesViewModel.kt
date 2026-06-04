@@ -41,9 +41,24 @@ class MesAnnoncesViewModel @Inject constructor(
     var description by mutableStateOf("")
     var typeSelectionne by mutableStateOf("")
 
+    var action by mutableStateOf("")
+
+    var rue by mutableStateOf("")
+
+    var personne by mutableStateOf("")
+
+
+
     var titreError by mutableStateOf(false)
     var descriptionError by mutableStateOf(false)
     var typeError by mutableStateOf(false)
+
+    var personneError by mutableStateOf(false)
+
+    var rueError by mutableStateOf(false)
+
+    var actionError by mutableStateOf(false)
+
 
     var successMessage by mutableStateOf("No message")
 
@@ -52,6 +67,9 @@ class MesAnnoncesViewModel @Inject constructor(
         titreError = titre.isBlank()
         descriptionError = description.isBlank()
         typeError = typeSelectionne.isBlank()
+        personneError = personne.isBlank()
+        rueError = rue.isBlank()
+        actionError = action.isBlank()
 
         if (titreError || descriptionError || typeError) return
 
@@ -59,7 +77,10 @@ class MesAnnoncesViewModel @Inject constructor(
             id = System.currentTimeMillis().toInt(),
             titre = titre.trim(),
             description = description.trim(),
-            typeService = typeSelectionne
+            typeService = typeSelectionne,
+            action = action.trim(),
+            personne = personne.trim(),
+            rue = rue.trim()
         )
         successMessage = repository.publier(annonce)
         onSuccess(annonce)
@@ -70,15 +91,36 @@ class MesAnnoncesViewModel @Inject constructor(
         titre = ""
         description = ""
         typeSelectionne = ""
+        action = ""
+        rue = ""
+        personne = ""
 
         titreError = false
         descriptionError = false
         typeError = false
+        personneError = false
+        rueError = false
+        actionError = false
     }
 
     fun onTitreChange(it: String) {
         titre = it; titreError = false
     }
+
+    fun onPersonneChange(it: String) {
+        personne = it; personneError = false
+    }
+
+    fun onRueChange(it: String) {
+        rue = it; rueError = false
+    }
+
+    fun onActionChange(it: String) {
+        action = it; actionError = false
+    }
+
+
+
 
     fun onDescritpionChange(it: String){
         description = it; descriptionError = false
@@ -90,5 +132,10 @@ class MesAnnoncesViewModel @Inject constructor(
 
     }
 
+    var localisation by mutableStateOf("")
+        private set
 
+    fun onLocationChange(newLocation: String) {
+        localisation = newLocation
+    }
 }

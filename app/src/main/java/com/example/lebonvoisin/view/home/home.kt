@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -27,6 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.lebonvoisin.dataclass.Annonce
 import com.example.lebonvoisin.viewmodel.home.homeViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun HomeScreen(
@@ -34,6 +40,13 @@ fun HomeScreen(
 ) {
     val annonces = viewModel.annonces
     val isLoading = viewModel.isLoading
+    var filtreSelectionne by remember { mutableStateOf("all") }
+
+    val annoncesFiltrees = when (filtreSelectionne) {
+        "Service" -> annonces.filter { it.action == "Service" }
+        "Objet" -> annonces.filter { it.action == "Objet" }
+        else -> annonces
+    }
 
     LaunchedEffect(Unit) {
         viewModel.chargerAnnonces()
@@ -64,6 +77,23 @@ fun HomeScreen(
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 16.sp
                 )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.padding(top = 12.dp)
+                ) {
+                    FilterButton("Tout", filtreSelectionne == "all") {
+                        filtreSelectionne = "all"
+                    }
+
+                    FilterButton("Services", filtreSelectionne == "Service") {
+                        filtreSelectionne = "Service"
+                    }
+
+                    FilterButton("Objets", filtreSelectionne == "Objet") {
+                        filtreSelectionne = "Objet"
+                    }
+                }
             }
         }
 
@@ -77,7 +107,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                items(annonces) { annonce ->
+                items(annoncesFiltrees) { annonce ->
                     AnnonceCard(annonce)
                 }
             }
@@ -101,7 +131,15 @@ fun AnnonceCard(annonce: Annonce) {
                 .padding(18.dp)
         ) {
             Text(
-                text = if (annonce.typeService == "object") "🔧" else "🐶",
+                text = when (annonce.typeService) {
+                    "Bricolage" -> "🔨"
+                    "Jardinage" -> "🌱"
+                    "Garde d'animaux" -> "🐶"
+                    "Cours particuliers" -> "📚"
+                    "Transport" -> "🚗"
+                    "Autre" -> "✨"
+                    else -> "📦"
+                },
                 fontSize = 32.sp,
                 modifier = Modifier.padding(end = 14.dp)
             )
@@ -130,17 +168,36 @@ fun AnnonceCard(annonce: Annonce) {
                     fontSize = 13.sp,
                     color = Color.Gray
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+
+                ) {
+                    Text(
+                        text = annonce.personne,
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+
+                    Spacer(modifier = Modifier.width(80.dp))
+                    Text(
+                        text = annonce.rue,
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                }
+
             }
 
             Text(
-                text = if (annonce.typeService == "object") "Objet" else "Service",
-                color = if (annonce.typeService == "object")
+                text = if (annonce.action == "Objet") "Objet" else "Service",
+                color = if (annonce.action == "Objet")
                     Color(0xFF2E9B4D)
                 else
                     Color(0xFF446DDB),
                 modifier = Modifier
                     .background(
-                        color = if (annonce.typeService == "object")
+                        color = if (annonce.action == "Objet")
                             Color(0xFFDDF5E5)
                         else
                             Color(0xFFE3EDFF),
@@ -149,5 +206,26 @@ fun AnnonceCard(annonce: Annonce) {
                     .padding(horizontal = 10.dp, vertical = 6.dp)
             )
         }
+    }
+}
+
+@Composable
+fun FilterButton(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(50.dp),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = if (selected) Color(0xFF050826) else Color(0xFFEDEEF2),
+            contentColor = if (selected) Color.White else Color(0xFF1B1B2F)
+        )
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold
+        )
     }
 }

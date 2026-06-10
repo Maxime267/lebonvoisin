@@ -51,7 +51,7 @@ fun Profile(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(text = "Voisinage : " + user?.neighborhoodName ) // TODO DB
-            Text(text = "Membre deuis le " + user?.inscriptionDate) // TODO DB
+            Text(text = "Membre depuis le " + user?.inscriptionDate) // TODO DB
 
 
         // Note
@@ -98,7 +98,7 @@ fun Profile(modifier: Modifier = Modifier) {
 
                 Button(
                     onClick = {
-                        profileViewModel.loadUserInfo() //TODO Change juste c une test
+                        profileViewModel.loadUserInfo() //TODO Change juste c un test
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -131,8 +131,8 @@ fun service_box(){
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        service_box_creation(Icons.Default.ShoppingCart, 0, "Object échangés")
-        service_box_creation(Icons.Default.Face, 0 , "Service échangés")
+        service_box_creation(Icons.Default.ShoppingCart, 0, "Objets échangés")
+        service_box_creation(Icons.Default.Face, 0 , "Services échangés")
     }
 }
 

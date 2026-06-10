@@ -1,11 +1,6 @@
 package com.example.lebonvoisin.view.profile
 
-fun parameters() {
+import androidx.compose.ui.Modifier
 
-
-    
-
-
-
-
+fun parameters(modifier : Modifier = Modifier){
 }

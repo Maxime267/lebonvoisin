@@ -13,6 +13,15 @@ import com.example.lebonvoisin.navigation.RootNavGraph
 import com.example.lebonvoisin.ui.theme.LebonvoisinTheme
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.Modifier
+import com.google.firebase.FirebaseApp
 
 @AndroidEntryPoint
 class EntryMain : ComponentActivity() {
@@ -21,14 +30,13 @@ class EntryMain : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LebonvoisinTheme {
-                RootNavGraph()
+                Surface( //theme de fond
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    RootNavGraph()
+                }
             }
         }
     }
-}
-
-
-@Composable
-fun MainScreen() {
-    RootNavGraph()
 }

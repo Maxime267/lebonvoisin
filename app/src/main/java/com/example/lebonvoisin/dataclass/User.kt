@@ -11,3 +11,4 @@ data class User(
     val bio : String? = ""
     //on ne prend pas le mot de passe pour des raisons de sécurité, on utilise firebase auth pour ça
 )
+

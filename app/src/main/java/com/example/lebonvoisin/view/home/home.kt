@@ -33,10 +33,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedButton
+import com.example.lebonvoisin.viewmodel.message.MessageViewModel
+
 
 @Composable
 fun HomeScreen(
-    viewModel: homeViewModel = hiltViewModel()
+    viewModel: homeViewModel = hiltViewModel(),
+    messageViewModel: MessageViewModel = hiltViewModel()
 ) {
     val annonces = viewModel.annonces
     val isLoading = viewModel.isLoading
@@ -47,6 +53,7 @@ fun HomeScreen(
         "Objet" -> annonces.filter { it.action == "Objet" }
         else -> annonces
     }
+    var annonceSelectionnee by remember { mutableStateOf<Annonce?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.chargerAnnonces()
@@ -108,17 +115,60 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 items(annoncesFiltrees) { annonce ->
-                    AnnonceCard(annonce)
+                    AnnonceCard(
+                        annonce = annonce,
+                        onClick = { annonceSelectionnee = annonce }
+                    )
                 }
             }
         }
     }
+    annonceSelectionnee?.let { annonce ->
+        AlertDialog(
+            onDismissRequest = { annonceSelectionnee = null },
+            title = {
+                Text(text = annonce.titre)
+            },
+            text = {
+                Column {
+                    Text(text = annonce.description)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = "Type : ${annonce.typeService}")
+                    Text(text = "Adresse : ${annonce.rue}")
+                    Text(text = "Publié par : ${annonce.personne}")
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        messageViewModel.contacterAnnonce(
+                            annonce = annonce,
+                            contenu = "Bonjour, je suis intéressé par votre annonce."
+                        )
+
+                        annonceSelectionnee = null
+                    }
+                ) {
+                    Text("Contacter / Demander")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { annonceSelectionnee = null }
+                ) {
+                    Text("Fermer")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-fun AnnonceCard(annonce: Annonce) {
+fun AnnonceCard(annonce: Annonce, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White

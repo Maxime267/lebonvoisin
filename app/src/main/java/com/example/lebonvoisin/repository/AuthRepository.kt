@@ -47,4 +47,8 @@ class AuthRepository @Inject constructor(
     suspend fun updatePassword(newPassword: String) {
         auth.currentUser?.updatePassword(newPassword)?.await() ?: throw Exception("update password failed")
     }
+    suspend fun updateEmail(newEmail: String) {
+        auth.currentUser?.verifyBeforeUpdateEmail(newEmail)?.await() ?: throw Exception("verify email failed")
+    //auth.currentUser?.updateEmail(newEmail)?.await() ?: throw Exception("update email failed")
+    }
 }

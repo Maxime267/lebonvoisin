@@ -26,13 +26,13 @@ class ProfileViewModel @Inject constructor(
     // User Info
     //=================
 
-    var user by mutableStateOf<User?>(
+    var user by mutableStateOf<User>(
         User(
             name = "",
             email = "",
             phone = "",
             profilePictureUrl = "",
-            inscriptionDate = "",
+            inscriptionDate = 0L,
             neighborhoodName = ""
         )
     )
@@ -44,7 +44,8 @@ class ProfileViewModel @Inject constructor(
             if(currentUser == null){
                 authRepository.signOut()
             }
-            user = currentUser
+            user = currentUser ?: user
+            newUser = currentUser ?: user
         }
     }
 
@@ -59,7 +60,7 @@ class ProfileViewModel @Inject constructor(
             email = "",
             phone = "",
             profilePictureUrl = "",
-            inscriptionDate = "",
+            inscriptionDate = 0L,
             neighborhoodName = ""
         )
     )
@@ -69,18 +70,21 @@ class ProfileViewModel @Inject constructor(
     fun changeUserData(oldPassword: String, newPassword: String?) {
         viewModelScope.launch {
             try {
+                //securité
                 authRepository.reauthenticate(oldPassword)
 
                 if (!newPassword.isNullOrBlank()) {
                     authRepository.updatePassword(newPassword)
                 }
 
+                authRepository.reauthenticate(newPassword ?: oldPassword) //important sinon bug
                 userRepository.updateUser(newUser)
 
                 message = "Modification effectuée"
 
             } catch (e: Exception) {
-                message = "Mot de passe incorrect"
+                Log.e("CHANGE_USER", "Erreur", e)
+                message = e.message ?: "Erreur inconnue"
             }
         }
     }
@@ -101,6 +105,9 @@ class ProfileViewModel @Inject constructor(
     }
     fun updateNeighborhood(newNeighborhood: String) {
         newUser = newUser.copy(neighborhoodName = newNeighborhood)
+    }
+    fun updateBio(newBio: String) {
+        newUser = newUser.copy(bio = newBio)
     }
 
 

@@ -42,7 +42,7 @@ class UserRepository @Inject constructor(
 
             userRef.get().addOnSuccessListener { document ->
                 if (!document.exists()) {
-                    val user = user.copy(Calendar.getInstance().time.toString())
+                    val user = user.copy(inscriptionDate = System.currentTimeMillis())
                     userRef.set(user)
                 }
             }

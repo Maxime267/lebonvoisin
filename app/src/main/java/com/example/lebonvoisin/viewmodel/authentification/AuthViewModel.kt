@@ -32,7 +32,7 @@ class AuthViewModel @Inject constructor(
             email = "",
             phone = "",
             profilePictureUrl = "",
-            inscriptionDate = "",
+            inscriptionDate = 0L,
             neighborhoodName = ""
         )
     )

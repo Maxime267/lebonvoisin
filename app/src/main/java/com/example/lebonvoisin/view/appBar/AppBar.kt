@@ -9,7 +9,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
@@ -17,7 +16,8 @@ import androidx.compose.runtime.remember
 fun AppBar(
     onHomeClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onSearchClick: () -> Unit
+    onSearchClick: () -> Unit,
+    onMessageClick: () -> Unit
 ) {
     var selected = remember { mutableStateOf("Home") }
 
@@ -41,6 +41,16 @@ fun AppBar(
                       },
             icon = { Icon(Icons.Default.AddCircle, null) },
             label = { Text("Ajouter") }
+        )
+
+        NavigationBarItem(
+            selected = selected.value == "Message",
+            onClick = {
+                selected.value = "Message"
+                onMessageClick()
+            },
+            icon = {Icon(Icons.Default.AddCircle,null )},
+            label = {Text("Message")}
         )
 
         NavigationBarItem(

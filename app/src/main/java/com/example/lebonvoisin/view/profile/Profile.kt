@@ -1,7 +1,6 @@
 package com.example.lebonvoisin.view.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Star
@@ -15,14 +14,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
 
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
+fun Profile(modifier: Modifier = Modifier, navController : NavController ) {
 
     val authViewModel : AuthViewModel = hiltViewModel()
     val profileViewModel : ProfileViewModel = hiltViewModel()
@@ -50,8 +49,8 @@ fun Profile(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "Voisinage : " + user?.neighborhoodName ) // TODO DB
-            Text(text = "Membre deuis le " + user?.inscriptionDate) // TODO DB
+            Text(text = "Voisinage : " + user?.neighborhoodName )
+            Text(text = "Membre deuis le " + user?.inscriptionDate)
 
 
         // Note
@@ -97,9 +96,7 @@ fun Profile(modifier: Modifier = Modifier) {
                 Text(text = profileViewModel.userID.toString())
 
                 Button(
-                    onClick = {
-                        profileViewModel.loadUserInfo() //TODO Change juste c une test
-                    },
+                    onClick = { navController.navigate("parameters") },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Modifier profil")

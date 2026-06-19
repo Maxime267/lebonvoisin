@@ -16,6 +16,8 @@ import com.example.lebonvoisin.view.home.HomeScreen
 import com.example.lebonvoisin.view.appBar.AppBar
 import com.example.lebonvoisin.view.authentification.inscription
 import com.example.lebonvoisin.view.profile.Profile
+import com.example.lebonvoisin.view.profile.Modify_Profile
+import com.example.lebonvoisin.view.profile.Parameters
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 
 
@@ -72,7 +74,9 @@ fun AppNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen() }
         composable("add") { MesAnnonces() }
-        composable("profile") { Profile() }
+        composable("profile") { Profile(navController =  navController) }
+        composable("parameters") { Parameters(navController = navController) }
+        composable("modify") { Modify_Profile(navController = navController) }
     }
 }
 

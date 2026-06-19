@@ -1,47 +1,47 @@
-package com.example.lebonvoisin.view.authentification
+package com.example.lebonvoisin.view.profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.lebonvoisin.dataclass.User
-import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-
-
-
-
+import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
 
 @Composable
-fun inscription(navController: NavHostController) {
+fun Modify_Profile(navController: NavHostController) {
 
-    val viewModel: AuthViewModel = hiltViewModel()
-    val user: User = viewModel.user.value
+    val viewModel: ProfileViewModel = hiltViewModel()
+    LaunchedEffect(Unit) {
+        viewModel.loadUserInfo()
+    }
+    val user : User = viewModel.user
 
-    var password by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var oldPassword by remember { mutableStateOf("") }
+    var changePassword by remember { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -67,7 +67,6 @@ fun inscription(navController: NavHostController) {
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                //TODO verification email (maybe)
                 OutlinedTextField(
                     value = user.email,
                     onValueChange = { viewModel.updateEmail(it) },
@@ -76,15 +75,31 @@ fun inscription(navController: NavHostController) {
                     singleLine = true
                 )
 
-                //TODO password confirmation secure
+
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = oldPassword,
+                    onValueChange = { oldPassword = it },
                     label = { Text("Mot de passe") },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
+
+                RadioButton(
+                    selected = changePassword,
+                    onClick = { changePassword != changePassword }
+                )
+
+                if(changePassword) {
+                    OutlinedTextField(
+                        value = newPassword,
+                        onValueChange = { newPassword = it },
+                        label = { Text("Mot de passe") },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                }
 
                 OutlinedTextField(
                     value = user.name,
@@ -117,27 +132,29 @@ fun inscription(navController: NavHostController) {
 
                 Button(
                     onClick = {
-                        scope.launch {
-                            viewModel.inscription(password)
+                        if(changePassword){
+                            viewModel.changeUserData( oldPassword, newPassword)
+                        }else{
+                            viewModel.changeUserData(oldPassword,null)
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("S'inscrire")
+                    Text("Validate Change")
                 }
 
                 OutlinedButton(
                     onClick = {
-                        navController.navigate("connection")
+                        navController.popBackStack()
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Déjà un compte ? Se connecter")
+                    Text("Go Back")
                 }
 
-                if (viewModel.message.value.isNotBlank()) {
+                if (viewModel.message.isNotBlank()) {
                     Text(
-                        text = viewModel.message.value,
+                        text = viewModel.message,
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -151,85 +168,3 @@ fun inscription(navController: NavHostController) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-
-//TODO version plus complète
-//TODO verifier champ rempli
-//version juste de test
-@Composable
-fun inscription(navController : NavHostController) {
-
-    val viewModel: AuthViewModel = hiltViewModel()
-    val user: User = viewModel.user.value
-    var password by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope() // scope pour lancer les appels suspend de viewModel
-
-    Column(modifier = Modifier.padding(8.dp)) {
-        OutlinedTextField(
-            value = user?.email ?: "",
-            onValueChange = { viewModel.updateEmail(it) },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("password") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = user.name,
-            onValueChange = { viewModel.updateName(it) },
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = user.phone.toString(),
-            onValueChange = { viewModel.updatePhone(it) },
-            label = { Text("phone") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = user.neighborhoodName ?: "",
-            onValueChange = { viewModel.updateNeighborhood(it) },
-            label = { Text("neighboorhood") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(onClick = { scope.launch { viewModel.inscription(password) } }) {
-            Text("S'inscrire")
-        }
-
-        Button(onClick = { navController.navigate("connection") }) {
-            Text("Se connecter")
-        }
-
-        //Message d'erreur
-        Text(text = viewModel.message.value)
-
-    }
-
-
-
-
-
-}
-*/

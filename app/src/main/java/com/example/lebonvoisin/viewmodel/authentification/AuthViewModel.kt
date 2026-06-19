@@ -2,12 +2,15 @@ package com.example.lebonvoisin.viewmodel.authentification
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.repository.AuthRepository
 import com.example.lebonvoisin.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -87,6 +90,7 @@ class AuthViewModel @Inject constructor(
             message.value = "Erreur: ${e.localizedMessage}"
         }
     }
+
 
     fun signOut() {
         authRepository.signOut()

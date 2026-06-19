@@ -30,7 +30,7 @@ fun AppBar(
                 onHomeClick()
                       },
             icon = { Icon(Icons.Default.Home, null) },
-            label = { Text("Home") }
+            label = { Text("Accueil") }
         )
 
         NavigationBarItem(
@@ -50,7 +50,7 @@ fun AppBar(
                 onProfileClick()
                       },
             icon = { Icon(Icons.Default.AccountCircle, null) },
-            label = { Text("Profile") }
+            label = { Text("Profil") }
         )
     }
 }

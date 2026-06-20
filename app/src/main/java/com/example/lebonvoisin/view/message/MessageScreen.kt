@@ -45,16 +45,22 @@ fun MessageScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(viewModel.conversations) { conversation ->
-                ConversationCard(
-                    conversation = conversation,
-                    onClick = {
-                        navController.navigate("conversation/${conversation.userId}")
-                    }
-                )
+        if (viewModel.conversations.isEmpty()) {
+            Text("Aucune conversation", color = Color.Gray)
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(viewModel.conversations) { conversation ->
+                    ConversationCard(
+                        conversation = conversation,
+                        onClick = {
+                            navController.navigate(
+                                "conversation/${conversation.annonceId}/${conversation.otherUserId}"
+                            )
+                        }
+                    )
+                }
             }
         }
     }
@@ -87,7 +93,7 @@ fun ConversationCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = conversation.annonceTitre.firstOrNull()?.uppercase() ?: "?",
+                    text = conversation.otherUserName.firstOrNull()?.uppercase() ?: "?",
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -96,20 +102,22 @@ fun ConversationCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = conversation.annonceTitre,
+                    text = conversation.otherUserName,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = conversation.userName,
-                    color = Color.Gray
+                    text = conversation.annonceTitre,
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Text(
                     text = conversation.dernierMessage.contenu,
+                    color = Color.Gray,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color.Gray
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 

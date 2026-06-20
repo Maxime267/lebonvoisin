@@ -24,18 +24,27 @@ class MessageViewModel @Inject constructor(
     fun chargerConversations() {
         viewModelScope.launch {
             isLoading = true
-            conversations = repository.getConversationsRecues()
+            conversations = repository.getConversations()
             isLoading = false
         }
     }
 
-    fun chargerConversationAvec(userId: String) {
+    fun chargerConversationAvec(
+        annonceId: String,
+        otherUserId: String
+    ) {
         viewModelScope.launch {
-            messagesConversation = repository.getConversationAvec(userId)
+            messagesConversation = repository.getConversationAvec(
+                annonceId = annonceId,
+                otherUserId = otherUserId
+            )
         }
     }
 
-    fun contacterAnnonce(annonce: Annonce, contenu: String) {
+    fun contacterAnnonce(
+        annonce: Annonce,
+        contenu: String = "Bonjour, je suis intéressé par votre annonce."
+    ) {
         viewModelScope.launch {
             val senderId = repository.getCurrentUserId() ?: return@launch
 
@@ -64,23 +73,27 @@ class MessageViewModel @Inject constructor(
         }
     }
 
-    fun envoyerMessageConversation(receiverId: String, contenu: String) {
+    fun envoyerMessageConversation(
+        annonceId: String,
+        otherUserId: String,
+        contenu: String
+    ) {
         viewModelScope.launch {
             val senderId = repository.getCurrentUserId() ?: return@launch
-            val ancienMessage = messagesConversation.lastOrNull()
+            val ancienMessage = messagesConversation.firstOrNull()
 
             val message = Message(
-                annonceId = ancienMessage?.annonceId ?: "",
+                annonceId = annonceId,
                 annonceTitre = ancienMessage?.annonceTitre ?: "",
                 proprietaireId = ancienMessage?.proprietaireId ?: "",
                 proprietaireNom = ancienMessage?.proprietaireNom ?: "",
                 senderId = senderId,
-                receiverId = receiverId,
+                receiverId = otherUserId,
                 contenu = contenu
             )
 
             messageInfo = repository.envoyerMessage(message)
-            chargerConversationAvec(receiverId)
+            chargerConversationAvec(annonceId, otherUserId)
         }
     }
 }

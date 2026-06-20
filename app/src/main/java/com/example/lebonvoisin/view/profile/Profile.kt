@@ -101,7 +101,7 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text(text = reviewViewModel.avgReview().toString() + " / 5" , color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
+                Text(text = String.format("%.2f", reviewViewModel.avgReview()) + " / 5" , color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
 
                 Spacer(modifier = Modifier.width(6.dp))
 

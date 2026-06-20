@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lebonvoisin.dataclass.Annonce
 import com.example.lebonvoisin.repository.AnnonceRepository
+import com.example.lebonvoisin.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class homeViewModel @Inject constructor(
-    private val repository: AnnonceRepository
+    private val repository: AnnonceRepository,
 ) : ViewModel() {
     var annonces by mutableStateOf(listOf<Annonce>())
     var isLoading by mutableStateOf(false)

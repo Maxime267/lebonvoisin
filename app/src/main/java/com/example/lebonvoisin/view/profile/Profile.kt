@@ -1,7 +1,9 @@
 package com.example.lebonvoisin.view.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Star
@@ -15,148 +17,207 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun Profile(modifier: Modifier = Modifier) {
+fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
-    val authViewModel : AuthViewModel = hiltViewModel()
-    val profileViewModel : ProfileViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val profileViewModel: ProfileViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         profileViewModel.loadUserInfo()
     }
-    val user : User? = profileViewModel.user
+
+    val user: User? = profileViewModel.user
+
+    val colorScheme = MaterialTheme.colorScheme
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .background(colorScheme.background)
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Header profil
+        // HEADER
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "Profile",
+            modifier = Modifier.size(110.dp),
+            tint = colorScheme.primary
+        )
 
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile",
-                modifier = Modifier.size(96.dp)
-            )
+        Text(
+            text = user?.name ?: "Utilisateur",
+            style = MaterialTheme.typography.titleLarge,
+            color = colorScheme.onBackground
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Voisinage : ${user?.neighborhoodName ?: "Inconnu"}",
+            color = colorScheme.onBackground.copy(alpha = 0.7f)
+        )
 
-            Text(text = "Voisinage : " + user?.neighborhoodName ) // TODO DB
-            Text(text = "Membre depuis le " + user?.inscriptionDate) // TODO DB
+        val date = Date(user?.inscriptionDate ?: 0L)
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE)
 
+        Text(
+            text = "Membre depuis le ${format.format(date)}",
+            color = colorScheme.onBackground.copy(alpha = 0.5f),
+            style = MaterialTheme.typography.bodySmall
+        )
 
-        // Note
+        // NOTE
+        Card(
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHighest),
+            elevation = CardDefaults.cardElevation(4.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Note",
+                    tint = Color(0xFFFFC107)
+                )
 
-            Card(
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text("4.8 / 5", color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text("(32 avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+            }
+        }
+
+        // SERVICES
+        service_box()
+
+        // BIO
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHigh),
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Column(modifier = Modifier.padding(14.dp)) {
+
+                Text(
+                    text = "Bio",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = user?.bio ?: "Aucune bio renseignée.",
+                    color = colorScheme.onSurface.copy(alpha = 0.8f),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        // ACTIONS
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+
+            OutlinedButton(
+                onClick = { navController.navigate("modify") },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Note",
-                        tint = Color(0xFFFFC107)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("4.8 / 5") // TODO DB
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("(32 avis)") // TODO DB
-                }
+                Text("Modifier profil")
             }
 
-
-        // Services / box
-
-            service_box()
-
-
-        // Annonces
-
-            Text(
-                text = "Mes annonces",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-
-        // Actions
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-                Text(text = profileViewModel.userID.toString())
-
-                Button(
-                    onClick = {
-                        profileViewModel.loadUserInfo() //TODO Change juste c un test
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Modifier profil")
-                }
-
-                OutlinedButton(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Paramètres")
-                }
-
-                Button(
-                    onClick = {authViewModel.signOut() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                ) {
-                    Text("Se déconnecter", color = Color.White)
-                }
+            Button(
+                onClick = { authViewModel.signOut() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor =  Color.Red
+                )
+            ) {
+                Text("Se déconnecter", color = colorScheme.onError)
             }
-
+        }
     }
 }
 
-
 @Composable
-fun service_box(){
+fun service_box() {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        service_box_creation(Icons.Default.ShoppingCart, 0, "Objets échangés")
-        service_box_creation(Icons.Default.Face, 0 , "Services échangés")
+        service_box_creation(
+            Icons.Default.ShoppingCart,
+            0,
+            "Objets échangés",
+            modifier = Modifier.weight(1f)
+        )
+
+        service_box_creation(
+            Icons.Default.Face,
+            0,
+            "Services échangés",
+            modifier = Modifier.weight(1f)
+        )
     }
 }
-
 @Composable
-fun service_box_creation(varIcon : ImageVector, nb_echanger : Int, title: String){
+fun service_box_creation(
+    varIcon: ImageVector,
+    nb_echanger: Int,
+    title: String,
+    modifier: Modifier
+) {
+
+    val colorScheme = MaterialTheme.colorScheme
+
     Card(
-        modifier = Modifier.size(150.dp)
+        modifier = modifier
+            .height(140.dp),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHigh),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ){
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
                 Icon(
                     imageVector = varIcon,
                     contentDescription = title,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(36.dp),
+                    tint = colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(title)
-                Text(nb_echanger.toString()) //TODO db
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = title,
+                    color = colorScheme.onSurface
+                )
+
+                Text(
+                    text = nb_echanger.toString(),
+                    color = colorScheme.secondary,
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
         }
     }

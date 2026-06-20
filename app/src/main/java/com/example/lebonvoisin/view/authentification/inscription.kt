@@ -40,7 +40,6 @@ fun inscription(navController: NavHostController) {
     val user: User = viewModel.user.value
 
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 

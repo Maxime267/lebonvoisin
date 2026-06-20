@@ -30,8 +30,9 @@ class AnnonceRepository @Inject constructor(
             "Erreur lors de la publication: ${e.message}"
         }
     }
-    suspend fun getAnnoncesByUser(userId: String): List<Annonce> {
+    suspend fun getAnnoncesCurrentUser(): List<Annonce> {
         return try {
+            val userId = firebaseAuth.currentUser?.uid ?: return emptyList()
             val snapshot = firestore.collection("annonces")
                 .whereEqualTo("ownerId", userId)
                 .get()
@@ -67,7 +68,8 @@ class AnnonceRepository @Inject constructor(
                     typeService = document.getString("typeService") ?: "",
                     personne = document.getString("personne") ?: "",
                     rue = document.getString("rue") ?: "",
-                    action = document.getString("action") ?: ""
+                    action = document.getString("action") ?: "",
+                    ownerId = document.getString("ownerId") ?:"Failed to get"
                 )
             }
         } catch (e: Exception) {

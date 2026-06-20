@@ -20,6 +20,7 @@ import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import java.text.SimpleDateFormat
@@ -106,7 +107,7 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
         }
 
         // SERVICES
-        service_box()
+        service_box(profileViewModel = profileViewModel)
 
         // BIO
         Card(
@@ -156,23 +157,22 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 }
 
 @Composable
-fun service_box() {
-
+fun service_box(profileViewModel: ProfileViewModel) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         service_box_creation(
             Icons.Default.ShoppingCart,
-            0,
-            "Objets échangés",
+            profileViewModel.objectCount.collectAsState().value,
+            "Post d'Objets",
             modifier = Modifier.weight(1f)
         )
 
         service_box_creation(
             Icons.Default.Face,
-            0,
-            "Services échangés",
+            profileViewModel.serviceCount.collectAsState().value,
+            "Post de Services",
             modifier = Modifier.weight(1f)
         )
     }

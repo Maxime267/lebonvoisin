@@ -3,33 +3,37 @@ package com.example.lebonvoisin.view.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun Profile(modifier: Modifier = Modifier, navController: NavController) {
-
+fun Profile(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
 
@@ -38,8 +42,10 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
     }
 
     val user: User? = profileViewModel.user
-
     val colorScheme = MaterialTheme.colorScheme
+
+    val userName = user?.name ?: "Utilisateur"
+    val initial = userName.firstOrNull()?.uppercase() ?: "?"
 
     Column(
         modifier = modifier
@@ -50,17 +56,23 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // HEADER
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "Profile",
-            modifier = Modifier.size(110.dp),
-            tint = colorScheme.primary
-        )
+        Box(
+            modifier = Modifier
+                .size(110.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFE1E4F2)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = initial,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF30323D)
+            )
+        }
 
         Text(
-            text = user?.name ?: "Utilisateur",
+            text = userName,
             style = MaterialTheme.typography.titleLarge,
             color = colorScheme.onBackground
         )
@@ -79,9 +91,10 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
             style = MaterialTheme.typography.bodySmall
         )
 
-        // NOTE
         Card(
-            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHighest),
+            colors = CardDefaults.cardColors(
+                containerColor = colorScheme.surfaceContainerHighest
+            ),
             elevation = CardDefaults.cardElevation(4.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -98,25 +111,31 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text("4.8 / 5", color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = "4.8 / 5",
+                    color = Color(0xFFFFC107),
+                    style = MaterialTheme.typography.titleMedium
+                )
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-                Text("(32 avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+                Text(
+                    text = "(32 avis)",
+                    color = colorScheme.onSurface.copy(alpha = 0.6f)
+                )
             }
         }
 
-        // SERVICES
         service_box(profileViewModel = profileViewModel)
 
-        // BIO
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHigh),
+            colors = CardDefaults.cardColors(
+                containerColor = colorScheme.surfaceContainerHigh
+            ),
             elevation = CardDefaults.cardElevation(2.dp)
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
-
                 Text(
                     text = "Bio",
                     style = MaterialTheme.typography.titleMedium,
@@ -133,9 +152,9 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
 
-        // ACTIONS
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             OutlinedButton(
                 onClick = { navController.navigate("modify") },
                 modifier = Modifier.fillMaxWidth()
@@ -147,7 +166,7 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
                 onClick = { authViewModel.signOut() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor =  Color.Red
+                    containerColor = Color.Red
                 )
             ) {
                 Text("Se déconnecter", color = colorScheme.onError)
@@ -163,20 +182,21 @@ fun service_box(profileViewModel: ProfileViewModel) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         service_box_creation(
-            Icons.Default.ShoppingCart,
-            profileViewModel.objectCount.collectAsState().value,
-            "Post d'Objets",
+            varIcon = Icons.Default.ShoppingCart,
+            nb_echanger = profileViewModel.objectCount.collectAsState().value,
+            title = "Post d'Objets",
             modifier = Modifier.weight(1f)
         )
 
         service_box_creation(
-            Icons.Default.Face,
-            profileViewModel.serviceCount.collectAsState().value,
-            "Post de Services",
+            varIcon = Icons.Default.Face,
+            nb_echanger = profileViewModel.serviceCount.collectAsState().value,
+            title = "Post de Services",
             modifier = Modifier.weight(1f)
         )
     }
 }
+
 @Composable
 fun service_box_creation(
     varIcon: ImageVector,
@@ -184,13 +204,13 @@ fun service_box_creation(
     title: String,
     modifier: Modifier
 ) {
-
     val colorScheme = MaterialTheme.colorScheme
 
     Card(
-        modifier = modifier
-            .height(140.dp),
-        colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceContainerHigh),
+        modifier = modifier.height(140.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorScheme.surfaceContainerHigh
+        ),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
@@ -198,7 +218,6 @@ fun service_box_creation(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
                 Icon(
                     imageVector = varIcon,
                     contentDescription = title,

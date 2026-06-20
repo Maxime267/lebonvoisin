@@ -18,7 +18,7 @@ class MessageRepository @Inject constructor(
     suspend fun envoyerMessage(message: Message): String {
         return try {
             firestore.collection("messages")
-                .add(message)
+                .add(message.copy(date = System.currentTimeMillis()))
                 .await()
 
             "Message envoyé"
@@ -40,30 +40,73 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    suspend fun getConversationsRecues(): List<Conversation> {
-        val currentUserId = auth.currentUser?.uid ?: return emptyList()
-
+    suspend fun getUserNameById(userId: String): String {
         return try {
-            val snapshot = firestore.collection("messages")
-                .whereEqualTo("receiverId", currentUserId)
+            val document = firestore.collection("users")
+                .document(userId)
                 .get()
                 .await()
 
-            val messages = snapshot.documents.mapNotNull { doc ->
-                doc.toObject(Message::class.java)?.copy(id = doc.id)
-            }
+            document.getString("nom")
+                ?: document.getString("name")
+                ?: document.getString("prenom")
+                ?: "Utilisateur"
+        } catch (e: Exception) {
+            "Utilisateur"
+        }
+    }
 
-            messages
-                .groupBy { it.annonceId }
-                .map { (_, messagesAnnonce) ->
-                    val dernierMessage = messagesAnnonce.maxByOrNull { it.date } ?: Message()
+    suspend fun getConversations(): List<Conversation> {
+        val currentUserId = auth.currentUser?.uid ?: return emptyList()
+
+        return try {
+            val messagesRecus = firestore.collection("messages")
+                .whereEqualTo("receiverId", currentUserId)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject(Message::class.java)?.copy(id = it.id) }
+
+            val messagesEnvoyes = firestore.collection("messages")
+                .whereEqualTo("senderId", currentUserId)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject(Message::class.java)?.copy(id = it.id) }
+
+            val allMessages = messagesRecus + messagesEnvoyes
+
+            allMessages
+                .groupBy { message ->
+                    val otherUserId = if (message.senderId == currentUserId) {
+                        message.receiverId
+                    } else {
+                        message.senderId
+                    }
+
+                    "${message.annonceId}_$otherUserId"
+                }
+                .map { (_, messagesConversation) ->
+
+                    val dernierMessage = messagesConversation.maxByOrNull { it.date } ?: Message()
+
+                    val otherUserId = if (dernierMessage.senderId == currentUserId) {
+                        dernierMessage.receiverId
+                    } else {
+                        dernierMessage.senderId
+                    }
+
+                    val otherUserName = getUserNameById(otherUserId)
 
                     Conversation(
-                        userId = dernierMessage.senderId,
-                        userName = dernierMessage.proprietaireNom,
+                        annonceId = dernierMessage.annonceId,
                         annonceTitre = dernierMessage.annonceTitre,
+                        otherUserId = otherUserId,
+                        otherUserName = otherUserName,
+                        proprietaireId = dernierMessage.proprietaireId,
+                        proprietaireNom = dernierMessage.proprietaireNom,
                         dernierMessage = dernierMessage,
-                        nombreMessages = messagesAnnonce.size
+                        nombreMessages = messagesConversation.size
                     )
                 }
                 .sortedByDescending { it.dernierMessage.date }
@@ -73,27 +116,32 @@ class MessageRepository @Inject constructor(
         }
     }
 
-    suspend fun getConversationAvec(userId: String): List<Message> {
+    suspend fun getConversationAvec(
+        annonceId: String,
+        otherUserId: String
+    ): List<Message> {
         val currentUserId = auth.currentUser?.uid ?: return emptyList()
 
         return try {
-            val recus = firestore.collection("messages")
-                .whereEqualTo("senderId", userId)
+            val messages1 = firestore.collection("messages")
+                .whereEqualTo("annonceId", annonceId)
+                .whereEqualTo("senderId", currentUserId)
+                .whereEqualTo("receiverId", otherUserId)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject(Message::class.java)?.copy(id = it.id) }
+
+            val messages2 = firestore.collection("messages")
+                .whereEqualTo("annonceId", annonceId)
+                .whereEqualTo("senderId", otherUserId)
                 .whereEqualTo("receiverId", currentUserId)
                 .get()
                 .await()
                 .documents
                 .mapNotNull { it.toObject(Message::class.java)?.copy(id = it.id) }
 
-            val envoyes = firestore.collection("messages")
-                .whereEqualTo("senderId", currentUserId)
-                .whereEqualTo("receiverId", userId)
-                .get()
-                .await()
-                .documents
-                .mapNotNull { it.toObject(Message::class.java)?.copy(id = it.id) }
-
-            (recus + envoyes).sortedBy { it.date }
+            (messages1 + messages2).sortedBy { it.date }
 
         } catch (e: Exception) {
             emptyList()

@@ -18,15 +18,21 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ConversationScreen(
-    userId: String,
+    annonceId: String,
+    otherUserId: String,
     onBackClick: () -> Unit,
     viewModel: MessageViewModel = hiltViewModel()
 ) {
     var texteMessage by remember { mutableStateOf("") }
 
-    LaunchedEffect(userId) {
-        viewModel.chargerConversationAvec(userId)
+    LaunchedEffect(annonceId, otherUserId) {
+        viewModel.chargerConversationAvec(
+            annonceId = annonceId,
+            otherUserId = otherUserId
+        )
     }
+
+    val titreAnnonce = viewModel.messagesConversation.firstOrNull()?.annonceTitre ?: "Conversation"
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -40,7 +46,7 @@ fun ConversationScreen(
             }
 
             Text(
-                text = viewModel.messagesConversation.firstOrNull()?.annonceTitre ?: "Conversation",
+                text = titreAnnonce,
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -73,7 +79,8 @@ fun ConversationScreen(
                 onClick = {
                     if (texteMessage.isNotBlank()) {
                         viewModel.envoyerMessageConversation(
-                            receiverId = userId,
+                            annonceId = annonceId,
+                            otherUserId = otherUserId,
                             contenu = texteMessage
                         )
                         texteMessage = ""
@@ -96,15 +103,21 @@ fun MessageBubble(message: Message) {
         horizontalArrangement = if (isMine) Arrangement.End else Arrangement.Start
     ) {
         Surface(
-            color = if (isMine) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.surfaceVariant,
+            color = if (isMine) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            },
             shape = MaterialTheme.shapes.medium
         ) {
             Text(
                 text = message.contenu,
                 modifier = Modifier.padding(12.dp),
-                color = if (isMine) MaterialTheme.colorScheme.onPrimary
-                else MaterialTheme.colorScheme.onSurfaceVariant
+                color = if (isMine) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
         }
     }

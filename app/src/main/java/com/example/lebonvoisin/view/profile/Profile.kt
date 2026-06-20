@@ -20,8 +20,10 @@ import com.example.lebonvoisin.viewmodel.profile.ProfileViewModel
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
+import com.example.lebonvoisin.viewmodel.review.ReviewViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,7 +33,9 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
     val authViewModel: AuthViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
+    val reviewViewModel : ReviewViewModel = hiltViewModel()
 
+    reviewViewModel.loadReviews()
     LaunchedEffect(Unit) {
         profileViewModel.loadUserInfo()
     }
@@ -97,16 +101,29 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text("4.8 / 5", color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
+                Text(text = reviewViewModel.avgReview().toString() + " / 5" , color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-                Text("(32 avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+                Text(text = "(" + reviewViewModel.reviewsOnMe.size.toString() + " avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                OutlinedButton(
+                    onClick = { navController.navigate("see_review") }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Review"
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Review")
+                }
             }
         }
 
         // SERVICES
-        service_box()
+        service_box(profileViewModel = profileViewModel)
 
         // BIO
         Card(
@@ -156,23 +173,22 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 }
 
 @Composable
-fun service_box() {
-
+fun service_box(profileViewModel: ProfileViewModel) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         service_box_creation(
             Icons.Default.ShoppingCart,
-            0,
-            "Objets échangés",
+            profileViewModel.objectCount.collectAsState().value,
+            "Post d'Objets",
             modifier = Modifier.weight(1f)
         )
 
         service_box_creation(
             Icons.Default.Face,
-            0,
-            "Services échangés",
+            profileViewModel.serviceCount.collectAsState().value,
+            "Post de Services",
             modifier = Modifier.weight(1f)
         )
     }

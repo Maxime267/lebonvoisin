@@ -24,6 +24,7 @@ fun MesAnnonces(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: MesAnnoncesViewModel = hiltViewModel()
+    viewModel.updateAnnonceList()
     val annonces = viewModel.annonces
     val afficherAjouter = viewModel.afficherAjouter
     //Pop up message retour ajout
@@ -39,7 +40,8 @@ fun MesAnnonces(
     if (afficherAjouter) {
         AjouterAnnonce(
             onPublier = { nouvelle ->
-                viewModel.ajouterAnnonce(nouvelle)
+                viewModel.updateAnnonceList()
+                viewModel.afficherAjouter = false
                 showMessage = true
             },
             onBack = { viewModel.afficherAjouter = false }

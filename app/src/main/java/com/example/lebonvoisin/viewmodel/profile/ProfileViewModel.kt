@@ -3,23 +3,24 @@ package com.example.lebonvoisin.viewmodel.profile
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.lebonvoisin.dataclass.Annonce
 import com.example.lebonvoisin.dataclass.User
 import com.example.lebonvoisin.repository.AnnonceRepository
 import com.example.lebonvoisin.repository.AuthRepository
 import com.example.lebonvoisin.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val annonceRepository: AnnonceRepository
 ) : ViewModel() {
 
     //=================
@@ -46,6 +47,21 @@ class ProfileViewModel @Inject constructor(
             }
             user = currentUser ?: user
             newUser = currentUser ?: user
+
+            loadActionCount()
+        }
+    }
+
+    private val _objectCount = MutableStateFlow(0)
+    val objectCount = _objectCount.asStateFlow()
+    private val _serviceCount = MutableStateFlow(0)
+    val serviceCount = _serviceCount.asStateFlow()
+
+    fun loadActionCount() {
+        viewModelScope.launch {
+            val annonces = annonceRepository.getAnnoncesCurrentUser()
+            _objectCount.value = annonces.count { it.action == "Objet" }
+            _serviceCount.value = annonces.count { it.action == "Service" }
         }
     }
 

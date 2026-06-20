@@ -71,18 +71,9 @@ fun AppNavGraph(navController: NavHostController) {
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home") {
-            HomeScreen(navController = navController)
-        }
-
-        composable("add") {
-            MesAnnonces()
-        }
-
-        composable("message") {
-            MessageScreen(navController = navController)
-        }
-
+        composable("home") { HomeScreen(navController = navController) }
+        composable("add") { MesAnnonces() }
+        composable("message") { MessageScreen(navController = navController) }
         composable("conversation/{annonceId}/{otherUserId}") { backStackEntry ->
             val annonceId = backStackEntry.arguments?.getString("annonceId") ?: ""
             val otherUserId = backStackEntry.arguments?.getString("otherUserId") ?: ""
@@ -110,21 +101,10 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        composable("see_review") {
-            SeeReview()
-        }
-
-        composable("profile") {
-            Profile(navController = navController)
-        }
-
-        composable("parameters") {
-            Parameters(navController = navController)
-        }
-
-        composable("modify") {
-            Modify_Profile(navController = navController)
-        }
+        composable("see_review") { SeeReview() }
+        composable("profile") { Profile(navController = navController) }
+        composable("parameters") { Parameters(navController = navController) }
+        composable("modify") { Modify_Profile(navController = navController) }
     }
 }
 

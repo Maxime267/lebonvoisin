@@ -14,7 +14,11 @@ import com.example.lebonvoisin.view.annonces.MesAnnonces
 import com.example.lebonvoisin.view.authentification.AuthScreen
 import com.example.lebonvoisin.view.home.HomeScreen
 import com.example.lebonvoisin.view.appBar.AppBar
+import com.example.lebonvoisin.view.authentification.AuthScreen
 import com.example.lebonvoisin.view.authentification.inscription
+import com.example.lebonvoisin.view.home.HomeScreen
+import com.example.lebonvoisin.view.message.ConversationScreen
+import com.example.lebonvoisin.view.message.MessageScreen
 import com.example.lebonvoisin.view.profile.Profile
 import com.example.lebonvoisin.view.profile.Modify_Profile
 import com.example.lebonvoisin.view.profile.Parameters
@@ -49,19 +53,20 @@ fun RootNavGraph(authViewModel: AuthViewModel = hiltViewModel()) {
 
 @Composable
 fun AppScaffold(rootNavController: NavHostController) {
-    val navController = rememberNavController()
+    val appNavController = rememberNavController()
     Scaffold(
         bottomBar = {
             AppBar(
-                onHomeClick = { navController.navigate("home") },
-                onSearchClick = { navController.navigate("add") },
-                onProfileClick = { navController.navigate("profile") }
+                onHomeClick = { appNavController.navigate("home") },
+                onSearchClick = { appNavController.navigate("add") },
+                onProfileClick = { appNavController.navigate("profile") } ,
+                onMessageClick = { appNavController.navigate("message") }
             )
         }
     ) { padding ->
 
         Box(modifier = Modifier.padding(padding)) {
-            AppNavGraph(navController)
+            AppNavGraph(appNavController)
         }
     }
 }
@@ -74,6 +79,17 @@ fun AppNavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen() }
         composable("add") { MesAnnonces() }
+        composable("message") { MessageScreen(navController = navController) }
+        composable("conversation/{userId}") { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+
+            ConversationScreen(
+                userId = userId,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
         composable("profile") { Profile(navController =  navController) }
         composable("parameters") { Parameters(navController = navController) }
         composable("modify") { Modify_Profile(navController = navController) }

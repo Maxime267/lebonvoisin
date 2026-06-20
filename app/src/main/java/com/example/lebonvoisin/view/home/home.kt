@@ -34,15 +34,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.navigation.NavController
 import com.example.lebonvoisin.viewmodel.message.MessageViewModel
 
 
 @Composable
 fun HomeScreen(
     viewModel: homeViewModel = hiltViewModel(),
-    messageViewModel: MessageViewModel = hiltViewModel()
+    messageViewModel: MessageViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val annonces = viewModel.annonces
     val isLoading = viewModel.isLoading
@@ -127,7 +133,32 @@ fun HomeScreen(
         AlertDialog(
             onDismissRequest = { annonceSelectionnee = null },
             title = {
-                Text(text = annonce.titre)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = annonce.titre,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            navController.navigate("review/${annonce.ownerId}")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Review"
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Review")
+                    }
+                }
             },
             text = {
                 Column {
@@ -145,6 +176,7 @@ fun HomeScreen(
                             annonce = annonce,
                             contenu = "Bonjour, je suis intéressé par votre annonce."
                         )
+                        navController.navigate("conversation/${annonce.ownerId}")
 
                         annonceSelectionnee = null
                     }

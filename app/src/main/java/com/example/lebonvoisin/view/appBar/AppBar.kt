@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -49,7 +50,7 @@ fun AppBar(
                 selected.value = "Message"
                 onMessageClick()
             },
-            icon = {Icon(Icons.Default.AddCircle,null )},
+            icon = {Icon(Icons.Default.Send,null )},
             label = {Text("Message")}
         )
 

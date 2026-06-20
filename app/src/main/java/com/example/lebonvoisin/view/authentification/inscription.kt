@@ -26,11 +26,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-
-
-
+import com.example.lebonvoisin.location.LocationHelper
 
 
 @Composable
@@ -42,6 +42,9 @@ fun inscription(navController: NavHostController) {
     var password by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+    val locationHelper = remember { LocationHelper(context) }
 
     Box(
         modifier = Modifier
@@ -67,7 +70,6 @@ fun inscription(navController: NavHostController) {
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                //TODO verification email (maybe)
                 OutlinedTextField(
                     value = user.email,
                     onValueChange = { viewModel.updateEmail(it) },
@@ -76,7 +78,6 @@ fun inscription(navController: NavHostController) {
                     singleLine = true
                 )
 
-                //TODO password confirmation secure
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -95,7 +96,6 @@ fun inscription(navController: NavHostController) {
                 )
 
 
-                //TODO format phone number
                 OutlinedTextField(
                     value = user.phone.toString(),
                     onValueChange = { viewModel.updatePhone(it) },
@@ -103,17 +103,34 @@ fun inscription(navController: NavHostController) {
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-
-                //TODO profile picture
-
-                //TODO get neighboorhood from geolocation
+                /*
                 OutlinedTextField(
                     value = user.neighborhoodName ?: "",
                     onValueChange = { viewModel.updateNeighborhood(it) },
-                    label = { Text("Quartier") },
+                    label = { Text("Nom de la Rue") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
+                )*/
+
+                OutlinedTextField(
+                    value = user.neighborhoodName ?: "",
+                    onValueChange = { viewModel.updateNeighborhood(it) },
+                    label = { Text("Voisinage") },
+                    placeholder = { Text("Décrivez votre service…") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
                 )
+                Button(
+                    onClick = {
+                        locationHelper.getCurrentAddress { adresse ->
+                            viewModel.updateNeighborhood(adresse)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("📍 Utiliser ma position actuelle")
+                }
+
 
                 Button(
                     onClick = {

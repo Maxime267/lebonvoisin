@@ -13,14 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.lebonvoisin.viewmodel.review.ReviewViewModel
-
-/*
-@Composable
-fun CreateReview(navController: NavHostController,
-                 sellerId: String){
-    Text(text = sellerId.toString())
-}
-*/
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -34,6 +27,15 @@ fun CreateReview(
     var rating by remember { mutableStateOf(0) }
     var comment by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(state) {
+        if (state == true) {
+            delay(300)
+            navController.popBackStack()
+        }
+    }
 
     Card(
         modifier = Modifier.fillMaxSize(),
@@ -110,7 +112,7 @@ fun CreateReview(
 
             Button(
                 onClick = {
-                    viewModel.createReview(
+                    viewModel.createReviewByCurrentUser(
                         sellerId = sellerId,
                         rating = rating,
                         title = title,
@@ -127,7 +129,7 @@ fun CreateReview(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Annuler")
+                Text("Retour")
             }
 
             if (viewModel.message.isNotBlank()) {

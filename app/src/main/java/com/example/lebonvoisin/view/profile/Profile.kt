@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
+import com.example.lebonvoisin.viewmodel.review.ReviewViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,7 +33,9 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
     val authViewModel: AuthViewModel = hiltViewModel()
     val profileViewModel: ProfileViewModel = hiltViewModel()
+    val reviewViewModel : ReviewViewModel = hiltViewModel()
 
+    reviewViewModel.loadReviews()
     LaunchedEffect(Unit) {
         profileViewModel.loadUserInfo()
     }
@@ -98,11 +101,24 @@ fun Profile(modifier: Modifier = Modifier, navController: NavController) {
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                Text("4.8 / 5", color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
+                Text(text = reviewViewModel.avgReview().toString() + " / 5" , color = Color(0xFFFFC107), style = MaterialTheme.typography.titleMedium)
 
                 Spacer(modifier = Modifier.width(6.dp))
 
-                Text("(32 avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+                Text(text = "(" + reviewViewModel.reviewsOnMe.size.toString() + " avis)", color = colorScheme.onSurface.copy(alpha = 0.6f))
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                OutlinedButton(
+                    onClick = { navController.navigate("see_review") }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Review"
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Review")
+                }
             }
         }
 

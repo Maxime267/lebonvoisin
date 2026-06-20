@@ -25,6 +25,7 @@ import com.example.lebonvoisin.view.profile.Profile
 import com.example.lebonvoisin.view.profile.Modify_Profile
 import com.example.lebonvoisin.view.profile.Parameters
 import com.example.lebonvoisin.view.review.CreateReview
+import com.example.lebonvoisin.view.review.SeeReview
 import com.example.lebonvoisin.viewmodel.authentification.AuthViewModel
 
 
@@ -112,6 +113,7 @@ fun AppNavGraph(navController: NavHostController) {
         composable("profile") { Profile(navController =  navController) }
         composable("parameters") { Parameters(navController = navController) }
         composable("modify") { Modify_Profile(navController = navController) }
+        composable("see_review") { SeeReview() }
     }
 }
 

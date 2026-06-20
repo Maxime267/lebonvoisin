@@ -34,6 +34,19 @@ class UserRepository @Inject constructor(
 
     fun getCurrentUserID() = auth.currentUser?.uid
 
+    suspend fun getUserById(uid: String): User? {
+        return try {
+            val doc = firestore.collection("users")
+                .document(uid)
+                .get()
+                .await()
+
+            doc.toObject(User::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun createUserIfNotExists(user: User) {
         try {
 

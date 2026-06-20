@@ -2,6 +2,7 @@ package com.example.lebonvoisin.repository
 
 import android.util.Log
 import com.example.lebonvoisin.dataclass.Annonce
+import com.example.lebonvoisin.dataclass.review.Review
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await

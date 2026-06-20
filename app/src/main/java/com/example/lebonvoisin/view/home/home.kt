@@ -176,6 +176,7 @@ fun HomeScreen(
                             annonce = annonce,
                             contenu = "Bonjour, je suis intéressé par votre annonce."
                         )
+                        navController.navigate("conversation/${annonce.ownerId}")
 
                         annonceSelectionnee = null
                     }
